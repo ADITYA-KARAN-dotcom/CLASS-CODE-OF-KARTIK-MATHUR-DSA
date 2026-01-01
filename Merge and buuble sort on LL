@@ -1,0 +1,165 @@
+#include <iostream>
+#include <list>
+using namespace std;
+class node
+{
+    public:
+    int data;
+    node* next;
+    node(int d)
+    {
+      data = d;
+      next = NULL;
+    }
+};
+node* mergeLL(node* &head,node* &head1)
+{
+    //Base Case
+    if(head==NULL) return head1;
+    else if(head1==NULL) return head;
+    //Recursive Case
+    node* newHead;
+    if(head->data<=head1->data)
+    {
+      newHead = head;
+      newHead->next = mergeLL(head->next,head1);
+    }
+    else
+    {
+     newHead = head1;
+     newHead->next = mergeLL(head,head1->next);
+    }
+    return newHead;
+}
+node* midLL(node* &head)
+{
+  node* temp = head;
+  node* s = temp;
+  if(head==NULL ||head->next==NULL) return head;
+  else if(head!=NULL and head->next!=NULL)
+  {
+    node* f = head->next;
+    while(f != NULL && f->next != NULL)
+    {
+        f = f->next->next;
+        s = s->next;
+    }
+    
+  }
+  return s;
+  
+}
+node* mergeSortLL(node* &head)
+{
+    //Base Case
+    if(head == NULL || head->next == NULL) return head;
+    //Recursive Case
+    //Divide
+    node* mid = midLL(head);
+    node* head1 = mid->next;
+    mid->next=NULL;
+    node* head2 = head;
+    //node* tail = mid->next;
+    //Sort
+    head2 = mergeSortLL(head2);
+    head1 = mergeSortLL(head1);
+    //Merge
+    node* ans = mergeLL(head2,head1);
+    return ans;
+
+}
+void addEnd(node* &head,node* &tail,int data)
+{
+    node* n = new node(data);
+    if(head == NULL)
+    {
+        head = tail = n;
+        head->next = NULL;
+    }
+    else{
+        tail->next=n;
+        tail = n;
+    }
+}
+void printLL(node* &head)
+{
+    node* temp = head;
+    while(head!=NULL)
+    {
+        cout<<head->data;
+        head = head->next;
+        if(head!=NULL) cout<<"->";
+    }
+}
+node* bubbleSort(node* &head)
+{
+    if(head == NULL||head->next==NULL) return head;
+    node* temp = head;
+    int cnt = 0;
+    while(head != NULL)
+    {
+      cnt++;
+      head = head->next;
+    }
+    head = temp;
+    node* present ;
+    node* past ;
+    node* future;
+    for(int i = 0;i<cnt-1;i++)
+    {
+        present = head;
+        past = NULL;
+        future = present->next;
+        while(future!=NULL)
+        {
+      if(present->data>future->data&&past==NULL)
+      {
+        present->next = future->next;
+        future->next = present;
+        head = future;
+        past = future;
+        future = present->next;
+        
+      }
+      else if(present->data>future->data&&past!=NULL)
+      {
+        //here we don't update our past,present,future
+        past->next = future;
+        present->next = future->next;
+        future->next = present;
+        past = past->next;
+        future = present->next;
+      }
+      else 
+      {
+        past = present;
+        present = future;
+        future = future->next;
+      }
+    }
+
+    }
+    return head;
+
+}
+int main()
+{
+    node* head = NULL;
+    node* tail = NULL;
+
+    addEnd(head,tail,4);
+    addEnd(head,tail,2);
+    addEnd(head,tail,3);
+    addEnd(head,tail,1);
+    addEnd(head,tail,6);
+    addEnd(head,tail,5);
+
+    node* a = bubbleSort(head);
+
+    printLL(a);
+
+
+
+
+    return 0;
+}
